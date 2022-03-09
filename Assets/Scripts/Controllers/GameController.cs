@@ -8,59 +8,72 @@ using System;
 using System.Linq;
 using UnityEngine.SceneManagement;
 
-public enum eState
+namespace Controllers
 {
-    TITLE,
-    GAME,
-    PAUSE,
-    GAMEOVER,
-    INSTRUCTIONS,
-    MENU,
-    EXITGAME,
-    LOADING,
-    CUTSCENE
-}
-
-public class GameController : MonoBehaviour
-{
-
-    #region Singleton
-    private static GameController _instance;
-
-    public static GameController Instance
+    public enum eState
     {
-        get
-        {
-            return _instance;
-        }
+        TITLE,
+        GAME,
+        PAUSE,
+        GAMEOVER,
+        INSTRUCTIONS,
+        MENU,
+        EXITGAME,
+        LOADING,
+        CUTSCENE
     }
 
-    private void Awake()
+    public class GameController : MonoBehaviour
     {
-        if (_instance == null)
+
+        #region Singleton
+        private static GameController _instance;
+
+        public static GameController Instance
         {
-            _instance = this;
-        }
-        else
-        {
-
-        }
-    }
-    #endregion
-
-    #region Core Functions
-
-    private void Update()
-    {
-        if (GameController.Instance.state == eState.GAME)
-        {
-
-            if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P))
+            get
             {
-                menuController.Pause();
+                return _instance;
             }
         }
-    }
-    #endregion
 
+        private void Awake()
+        {
+            if (_instance == null)
+            {
+                _instance = this;
+            }
+            else
+            {
+
+            }
+        }
+        #endregion
+
+        #region Variables
+        public eState state;
+        MenuController menuController;
+        #endregion
+
+        #region Core Functions
+
+        private void Start()
+        {
+            menuController = GameObject.Find("Controllers").GetComponent<MenuController>();
+        }
+
+        private void Update()
+        {
+            if (state == eState.GAME)
+            {
+
+                if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P))
+                {
+                    menuController.Pause();
+                }
+            }
+        }
+        #endregion
+
+    }
 }
