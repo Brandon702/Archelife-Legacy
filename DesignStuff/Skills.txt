@@ -1,0 +1,40 @@
+Each Skill set should have 1 main combat style and 5 crafting skills
+
+STR (Beserker) (Carry Weight Increase)
+Mining
+Digging
+Forestry
+
+CON (Knight) (Max HP Increase)
+Forging
+Farming
+Glassworking
+
+DEX (Blackguard) (Max Stamina Increase)
+Carpendry
+Tailoring
+Hunting
+Animal Husbandry
+
+INT (Cleric) ()
+Construction
+Engineering
+Healing
+Alchemy
+Trapping
+
+PER (Ranger) ()
+Herbalism
+Jewelry Making
+Pottery
+Bowcrafting
+
+CHR (Sentinel) ()
+Cooking
+Trading
+
+General Skills
+Horseback riding
+Tactician
+General Survival
+Teaching
