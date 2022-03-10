@@ -62,7 +62,7 @@ namespace Controllers
         {
             audioController = GameObject.Find("Controllers").GetComponent<AudioController>();
             CutsceneVideoPlayer = GameObject.Find("CutsceneVideoPlayer");
-            loadingSubtext = CutscenePanel.transform.Find("LoadingSubtext").gameObject.GetComponentInChildren<CanvasGroup>();
+            levelLoadingController.loadingSubtext = CutscenePanel.transform.Find("LoadingSubtext").gameObject.GetComponentInChildren<CanvasGroup>();
             MainUI = GameObject.FindGameObjectWithTag("UI");
         }
 
@@ -136,6 +136,7 @@ namespace Controllers
         {
             Disable();
             panel.SetActive(true);
+            //Main Menu Cutscene Panel set active if state = title
         }
 
         public void DisablePanel(GameObject panel)
@@ -150,8 +151,9 @@ namespace Controllers
 
         public void StartGame(GameObject mainMenuPanel)
         {
-            ChangePanel(mainMenuPanel, false);
-            StartCoroutine(LoadLevel("Game"));
+            EnablePanel(mainMenuPanel);
+            levelLoadingController.LoadWithCoroutine("Game");
+            Loaded
             audioController.Stop("Track" + playing);
             gameTrackPlayer();
             Time.timeScale = 1;
@@ -166,7 +168,7 @@ namespace Controllers
             GameController.Instance.state = eState.GAME;
             Debug.Log("Resume Game");
         }
-
+        
         public void Options()
         {
             Disable();
@@ -199,6 +201,7 @@ namespace Controllers
             }
             Debug.Log("Credits menu");
         }
+        //Options, Instructions, Credits, Pause
         public void Pause()
         {
             if (GameController.Instance.state == eState.GAME && nationSelected == true)
@@ -223,7 +226,7 @@ namespace Controllers
             {
                 if (SceneManager.GetActiveScene().name != "Main")
                 {
-                    StartCoroutine(LoadLevel("Main"));
+                    levelLoadingController.LoadWithCoroutine("Main");
                 }
                 //Game Panel to inactive
                 //Main Menu panel to active

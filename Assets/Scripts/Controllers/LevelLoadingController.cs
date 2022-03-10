@@ -16,7 +16,7 @@ namespace Controllers
         [SerializeField] private Animator transition;
         [SerializeField] private Animator cutsceneTransition;
         TextMeshProUGUI loadingText;
-        CanvasGroup loadingSubtext;
+        public CanvasGroup loadingSubtext;
         private float changeLoadingUi = 0f;
         private float minimumLoadingTime = 0f;
         Slider progressBar;
@@ -24,6 +24,12 @@ namespace Controllers
         #endregion
 
         #region Functions
+
+        public void LoadWithCoroutine(string levelName)
+        {
+            StartCoroutine(LoadLevel(levelName));
+        }
+
         public IEnumerator LoadLevel(string levelName)
         {
             isLoading = true;
@@ -45,10 +51,6 @@ namespace Controllers
                 LoadingScreenPanel.transform.Find("LoadingBar").gameObject.SetActive(true);
             }
             GamePanel.SetActive(true);
-            topUI.SetActive(true);
-            calandar.SetActive(true);
-            flagStuff.SetActive(true);
-            timeScaler.SetActive(true);
 
             AsyncOperation operation = SceneManager.LoadSceneAsync(levelName, LoadSceneMode.Additive);
 
@@ -141,10 +143,6 @@ namespace Controllers
                     CutscenePanel.SetActive(false);
                     CutsceneVideoPlayer.SetActive(false);
                     GamePanel.SetActive(true);
-                    topUI.SetActive(true);
-                    calandar.SetActive(true);
-                    flagStuff.SetActive(true);
-                    timeScaler.SetActive(true);
                     transition.SetTrigger("End");
                     playerNationText.text = gameController.playerNation.name;
                     Invoke("destroyLoadingScreen", transitionTime);
