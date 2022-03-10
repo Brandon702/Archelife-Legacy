@@ -13,37 +13,49 @@ namespace Controllers
     public class MenuController : MonoBehaviour
     {
 
+        #region Singleton
+        private static MenuController _instance;
+
+        public static MenuController Instance
+        {
+            get
+            {
+                return _instance;
+            }
+        }
+
+        private void Awake()
+        {
+            if (_instance == null)
+            {
+                _instance = this;
+            }
+        }
+        #endregion
+
         #region Variables
 
         //Controllers
-        private AudioController audioController;
-        private LevelLoadingController levelLoadingController;
+        private AudioController audioController = AudioController.Instance;
+        private LevelLoadingController levelLoadingController = LevelLoadingController.Instance;
 
         //Vars
-        private GameObject MainUI;
         private GameObject CutsceneVideoPlayer;
-        private List<GameObject> MenuPanels = new List<GameObject>();
         private bool paused;
-        private PanelType panel;
 
         [Header("System")]
         [SerializeField] private List<Scene> scenes = new List<Scene>();
+        public List<GameObject> menuPanels = new List<GameObject>();
 
         #endregion
 
         #region Core Functions
 
-        private void Awake()
+        private void Start()
         {
             DontDestroyOnLoad(gameObject);
             populatePanels();
-            setValues();
-            Disable();
-            CutsceneVideoPlayer.SetActive(false);
-        }
-
-        private void Start()
-        {
+            //Disable cutscene panel
             Time.timeScale = 1;
             GameController.Instance.state = eState.TITLE;
             if (GameController.Instance.state == eState.TITLE)
@@ -59,75 +71,20 @@ namespace Controllers
 
         #region Functions
 
-        private void setValues()
-        {
-            audioController = GameObject.Find("Controllers").GetComponent<AudioController>();
-            CutsceneVideoPlayer = GameObject.Find("CutsceneVideoPlayer");
-            levelLoadingController.loadingSubtext = CutscenePanel.transform.Find("LoadingSubtext").gameObject.GetComponentInChildren<CanvasGroup>();
-            MainUI = GameObject.FindGameObjectWithTag("UI");
-        }
 
         private void populatePanels()
         {
-            List<GameObject> allPanels = new List<GameObject>();
-            foreach (Transform child in MainUI.transform)
+            foreach (GameObject child in menuPanels)
             {
-                child.gameObject.SetActive(true);
-                foreach (Transform grandChild in child)
-                {
-                    grandChild.gameObject.SetActive(true);
-                    allPanels.Add(grandChild.gameObject);
-                }
+                child.SetActive(true);
             }
-            foreach (GameObject child in allPanels)
-            {
-                child.gameObject.SetActive(true);
-                if (child.gameObject.CompareTag("UI") && child.name != "LoadingScreenPanel")
-                {
-                    MenuPanels.Add(child.gameObject);
-                    switch (child.name)
-                    {
-                        case "MainMenuPanel":
-                            MainMenuPanel = child.gameObject;
-                            break;
-                        case "OptionsPanel":
-                            OptionsPanel = child.gameObject;
-                            break;
-                        case "CreditsPanel":
-                            CreditsPanel = child.gameObject;
-                            break;
-                        case "PausePanel":
-                            PausePanel = child.gameObject;
-                            break;
-                        case "InstructionsPanel":
-                            InstructionsPanel = child.gameObject;
-                            break;
-                        case "GamePanel":
-                            GamePanel = child.gameObject;
-                            break;
-                        case "VideoPanel":
-                            VideoPanel = child.gameObject;
-                            break;
-                        case "CutscenePanel":
-                            CutscenePanel = child.gameObject;
-                            break;
-                        default:
-                            break;
-                    }
-                }
-                else if (child.gameObject.CompareTag("UI") && child.name == "LoadingScreenPanel")
-                {
-                    //LoadingScreenPanel = child.gameObject;
-                    //progressBar = LoadingScreenPanel.transform.Find("LoadingBar").gameObject.GetComponent<Slider>();
-                    //loadingText = LoadingScreenPanel.transform.Find("LoadingText").gameObject.GetComponent<TextMeshProUGUI>();
-                    //Disable loading screen panel
-                }
-            }
+            levelLoadingController.loadingSubtext = CutscenePanel.transform.Find("LoadingSubtext").gameObject.GetComponentInChildren<CanvasGroup>();
+            Disable();
         }
 
         public void Disable()
         {
-            foreach (GameObject gameObject in MenuPanels)
+            foreach (GameObject gameObject in menuPanels)
             {
                 gameObject.SetActive(false);
             }

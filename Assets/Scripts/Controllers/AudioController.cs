@@ -8,13 +8,33 @@ namespace Controllers
     public class AudioController : MonoBehaviour
     {
 
+        #region Singleton
+        private static AudioController _instance;
+
+        public static AudioController Instance
+        {
+            get
+            {
+                return _instance;
+            }
+        }
+
+        private void Awake()
+        {
+            if (_instance == null)
+            {
+                _instance = this;
+            }
+        }
+        #endregion
+
         #region Variables
         [SerializeField] private Sound[] sounds;
         public AudioMixer mixer;
         #endregion
 
         #region Core Functions
-        private void Awake()
+        private void Start()
         {
             foreach (Sound s in sounds)
             {
@@ -58,15 +78,16 @@ namespace Controllers
             Debug.Log("Now Playing: " + musicClip.name);
         }
 
-        public void SetLevel(float sliderValue)
+        public void SetLevel(eAudioType audioType, float sliderValue)
         {
+
             if (sliderValue == 0)
             {
-                mixer.SetFloat("SFX", -80);
+                mixer.SetFloat(audioType.ToString(), -80);
             }
             else
             {
-                mixer.SetFloat("SFX", Mathf.Log10(sliderValue) * 20);
+                mixer.SetFloat(audioType.ToString(), Mathf.Log10(sliderValue) * 20);
             }
         }
 

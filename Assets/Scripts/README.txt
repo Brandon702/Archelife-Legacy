@@ -1,4 +1,12 @@
-CHANGE TO SINGLETONS AHHHHHHHHH WHY DIDNT I THINK OF THAT
+Note to self:
+Fix errors
+Implement commented out code
+Add Saving & Loading
+Test in unity
+Update this file to help set up games universally
+
+
+Tags are the way to check everything for panels
 
 Instructions:
 

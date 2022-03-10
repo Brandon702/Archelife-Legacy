@@ -2,14 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Controllers
 {
     public class LevelLoadingController : MonoBehaviour
     {
-        #region Variables
 
+        #region Singleton
+        private static LevelLoadingController _instance;
+
+        public static LevelLoadingController Instance
+        {
+            get
+            {
+                return _instance;
+            }
+        }
+
+        private void Awake()
+        {
+            if (_instance == null)
+            {
+                _instance = this;
+            }
+        }
+        #endregion
+
+        #region Variables
+        MenuController menuController = MenuController.Instance;
         bool isLoading = true;
         int elipses = 0;
         [SerializeField] private float transitionTime = 1f;
@@ -39,7 +61,7 @@ namespace Controllers
             LoadingScreenPanel.SetActive(true);
             transition.SetTrigger("Start");
             yield return new WaitForSeconds(transitionTime);
-            Disable();
+            menuController.Disable();
             if (levelName == "Main")
             {
                 var scene = GameObject.Find("Scene").GetComponent<Transform>();

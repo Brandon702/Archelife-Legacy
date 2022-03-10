@@ -39,10 +39,6 @@ namespace Controllers
             {
                 _instance = this;
             }
-            else
-            {
-
-            }
         }
         #endregion
 
@@ -60,7 +56,8 @@ namespace Controllers
 
                 if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P))
                 {
-                    menuController.Pause();
+                    //Pause Game
+                    menuController.EnablePanel();
                 }
             }
         }

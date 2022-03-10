@@ -6,6 +6,27 @@ namespace Controllers
 {
     public class CutsceneController : MonoBehaviour
     {
+
+        #region Singleton
+        private static CutsceneController _instance;
+
+        public static CutsceneController Instance
+        {
+            get
+            {
+                return _instance;
+            }
+        }
+
+        private void Awake()
+        {
+            if (_instance == null)
+            {
+                _instance = this;
+            }
+        }
+        #endregion
+
         #region Variables
         private bool activated;
         private bool isCompleted = false;
