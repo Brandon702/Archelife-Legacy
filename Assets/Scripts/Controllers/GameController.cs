@@ -15,10 +15,6 @@ namespace Controllers
         TITLE,
         GAME,
         PAUSE,
-        GAMEOVER,
-        INSTRUCTIONS,
-        MENU,
-        EXITGAME,
         LOADING,
         CUTSCENE
     }
@@ -50,11 +46,6 @@ namespace Controllers
         }
         #endregion
 
-        #region Variables
-        public eState state;
-        MenuController menuController;
-        #endregion
-
         #region Core Functions
 
         private void Start()
@@ -75,5 +66,9 @@ namespace Controllers
         }
         #endregion
 
+        #region Variables
+        public eState state;
+        MenuController menuController;
+        #endregion
     }
 }

@@ -24,6 +24,7 @@ namespace Controllers
         private GameObject CutsceneVideoPlayer;
         private List<GameObject> MenuPanels = new List<GameObject>();
         private bool paused;
+        private PanelType panel;
 
         [Header("System")]
         [SerializeField] private List<Scene> scenes = new List<Scene>();
@@ -68,7 +69,7 @@ namespace Controllers
 
         private void populatePanels()
         {
-            MainUI.SetActive(true);
+            List<GameObject> allPanels = new List<GameObject>();
             foreach (Transform child in MainUI.transform)
             {
                 child.gameObject.SetActive(true);
@@ -83,8 +84,7 @@ namespace Controllers
                 child.gameObject.SetActive(true);
                 if (child.gameObject.CompareTag("UI") && child.name != "LoadingScreenPanel")
                 {
-                    Debug.Log(child.name);
-                    panels.Add(child.gameObject);
+                    MenuPanels.Add(child.gameObject);
                     switch (child.name)
                     {
                         case "MainMenuPanel":
@@ -117,10 +117,10 @@ namespace Controllers
                 }
                 else if (child.gameObject.CompareTag("UI") && child.name == "LoadingScreenPanel")
                 {
-                    LoadingScreenPanel = child.gameObject;
-                    progressBar = LoadingScreenPanel.transform.Find("LoadingBar").gameObject.GetComponent<Slider>();
-                    loadingText = LoadingScreenPanel.transform.Find("LoadingText").gameObject.GetComponent<TextMeshProUGUI>();
-                    LoadingScreenPanel.SetActive(false);
+                    //LoadingScreenPanel = child.gameObject;
+                    //progressBar = LoadingScreenPanel.transform.Find("LoadingBar").gameObject.GetComponent<Slider>();
+                    //loadingText = LoadingScreenPanel.transform.Find("LoadingText").gameObject.GetComponent<TextMeshProUGUI>();
+                    //Disable loading screen panel
                 }
             }
         }
@@ -132,11 +132,59 @@ namespace Controllers
                 gameObject.SetActive(false);
             }
         }
+
+        public void QuickToggle(GameObject panel, bool enable)
+        {
+            if(enable)
+            {
+                Disable();
+                panel.SetActive(true);
+            }
+            else
+            {
+                panel.SetActive(false);
+            }
+            
+        }
+
         public void EnablePanel(GameObject panel)
         {
-            Disable();
-            panel.SetActive(true);
-            //Main Menu Cutscene Panel set active if state = title
+            switch(panel.tag)
+            {
+                case "MainMenu":
+                    GameController.Instance.state = eState.TITLE;
+                    QuickToggle(panel, true);
+                    break;
+                case "Resume":
+                    GameController.Instance.state = eState.GAME;
+                    Time.timeScale = 1;
+                    QuickToggle(panel, true);
+                    break;
+                case "Options":
+                    QuickToggle(panel, true);
+                    break;
+                case "Instructions":
+                    QuickToggle(panel, true);
+                    break;
+                case "Credits":
+                    QuickToggle(panel, true);
+                    break;
+                case "Pause":
+                    if (GameController.Instance.state == eState.GAME)
+                    {
+                        Time.timeScale = 0;
+                        GameController.Instance.state = eState.PAUSE;
+                        QuickToggle(panel, true);
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+            if (GameController.Instance.state == eState.TITLE)
+            {
+                //Set main menu videopanel to active
+            }
         }
 
         public void DisablePanel(GameObject panel)
@@ -145,94 +193,45 @@ namespace Controllers
             panel.SetActive(false);
         }
 
-        #endregion
-
-        #region Panel Changing
-
         public void StartGame(GameObject mainMenuPanel)
         {
             EnablePanel(mainMenuPanel);
             levelLoadingController.LoadWithCoroutine("Game");
-            Loaded
-            audioController.Stop("Track" + playing);
-            gameTrackPlayer();
             Time.timeScale = 1;
             GameController.Instance.state = eState.LOADING;
         }
 
-        public void ResumeGame()
+        //Back to Menu, if not then pack to pause
+        public void GoBack(bool backToMainMenu, bool Dynamic)
         {
-            Disable();
-            Time.timeScale = 1;
-            GamePanel.SetActive(true);
-            GameController.Instance.state = eState.GAME;
-            Debug.Log("Resume Game");
-        }
-        
-        public void Options()
-        {
-            Disable();
-            OptionsPanel.SetActive(true);
-            if (GameController.Instance.state == eState.TITLE)
+            if(!Dynamic)
             {
-                VideoPanel.SetActive(true);
-            }
-            Debug.Log("Options menu");
-        }
-
-        public void Instructions()
-        {
-            Disable();
-            InstructionsPanel.SetActive(true);
-            if (GameController.Instance.state == eState.TITLE)
-            {
-                VideoPanel.SetActive(true);
-            }
-            //GameController.Instance.state = eState.INSTRUCTIONS;
-        }
-
-        public void Credits()
-        {
-            Disable();
-            CreditsPanel.SetActive(true);
-            if (GameController.Instance.state == eState.TITLE)
-            {
-                VideoPanel.SetActive(true);
-            }
-            Debug.Log("Credits menu");
-        }
-        //Options, Instructions, Credits, Pause
-        public void Pause()
-        {
-            if (GameController.Instance.state == eState.GAME && nationSelected == true)
-            {
-                Time.timeScale = 0;
                 Disable();
-                PausePanel.SetActive(true);
-                GameController.Instance.state = eState.PAUSE;
-            }
-        }
-
-        public void Back(bool backToMenu)
-        {
-            Disable();
-
-            if (!backToMenu)
-            {
-                //Set Pause Panel to active
-                GameController.Instance.state = eState.PAUSE;
+                if (!backToMainMenu)
+                {
+                    //Set Pause Panel to active
+                    GameController.Instance.state = eState.PAUSE;
+                }
+                else
+                {
+                    if (SceneManager.GetActiveScene().name != "Main")
+                    {
+                        levelLoadingController.LoadWithCoroutine("Main");
+                    }
+                    //Game Panel to inactive
+                    //Main Menu panel to active
+                    GameController.Instance.state = eState.TITLE;
+                    //Video Panel to active
+                }
             }
             else
             {
-                if (SceneManager.GetActiveScene().name != "Main")
+                if(GameController.Instance.state == eState.TITLE)
                 {
-                    levelLoadingController.LoadWithCoroutine("Main");
+
                 }
-                //Game Panel to inactive
-                //Main Menu panel to active
-                GameController.Instance.state = eState.TITLE;
-                //Video Panel to active
             }
+            
         }
 
         #endregion

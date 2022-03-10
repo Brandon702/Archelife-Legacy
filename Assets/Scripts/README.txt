@@ -12,6 +12,8 @@ the same object.
 	LevelLoadingController - Used to load levels either Async or normally
 
 	MenuController - Controls the game panels
+		Panels - To use the panel system, you need to tag or name them with the correct convention
+			That would be keywords such as the following: MainMenu,Resume,Options,Instructions,Credits, & Pause.
 
 Game - Game Specific Scripts, DO NOT use this section for universal and generic features.
 
