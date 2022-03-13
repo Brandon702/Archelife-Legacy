@@ -39,6 +39,9 @@ namespace Controllers
         private AudioController audioController = AudioController.Instance;
         private LevelLoadingController levelLoadingController = LevelLoadingController.Instance;
 
+        //Panels
+        private GameObject pausePanel;
+
         //Vars
         private GameObject CutsceneVideoPlayer;
         private bool paused;
@@ -65,6 +68,14 @@ namespace Controllers
 
             }
             //Start Main Menu Music
+
+            foreach(GameObject panel in menuPanels)
+            {
+                if(panel.tag == "Pause")
+                {
+                    pausePanel = panel;
+                }
+            }
         }
 
         #endregion
@@ -78,7 +89,6 @@ namespace Controllers
             {
                 child.SetActive(true);
             }
-            levelLoadingController.loadingSubtext = CutscenePanel.transform.Find("LoadingSubtext").gameObject.GetComponentInChildren<CanvasGroup>();
             Disable();
         }
 
@@ -104,6 +114,17 @@ namespace Controllers
             
         }
 
+        public void Pause()
+        {
+            if (GameController.Instance.state == eState.GAME)
+            {
+                Time.timeScale = 0;
+                GameController.Instance.state = eState.PAUSE;
+                Disable();
+                pausePanel.SetActive(true);
+            }
+        }
+
         public void EnablePanel(GameObject panel)
         {
             switch(panel.tag)
@@ -127,12 +148,7 @@ namespace Controllers
                     QuickToggle(panel, true);
                     break;
                 case "Pause":
-                    if (GameController.Instance.state == eState.GAME)
-                    {
-                        Time.timeScale = 0;
-                        GameController.Instance.state = eState.PAUSE;
-                        QuickToggle(panel, true);
-                    }
+                    Pause();
                     break;
                 default:
                     break;

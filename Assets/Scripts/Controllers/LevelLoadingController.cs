@@ -45,6 +45,14 @@ namespace Controllers
 
         #endregion
 
+        #region Core Functions
+        private void Start()
+        {
+            loadingSubtext = CutscenePanel.transform.Find("LoadingSubtext").gameObject.GetComponentInChildren<CanvasGroup>();
+        }
+
+        #endregion
+
         #region Functions
 
         public void LoadWithCoroutine(string levelName)

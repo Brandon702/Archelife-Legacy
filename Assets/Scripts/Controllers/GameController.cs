@@ -57,7 +57,7 @@ namespace Controllers
                 if (Input.GetKeyDown(KeyCode.Escape) || Input.GetKeyDown(KeyCode.P))
                 {
                     //Pause Game
-                    menuController.EnablePanel();
+                    menuController.Pause();
                 }
             }
         }
