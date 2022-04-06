@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -28,8 +29,13 @@ namespace Controllers
         #endregion
 
         #region Variables
+        MenuController menuController = MenuController.Instance;
         private bool activated;
         private bool isCompleted = false;
+        [SerializeField] private Animator cutsceneTransition;
+        [SerializeField] CanvasGroup loadingSubtext;
+        [SerializeField] Animator transition;
+        [SerializeField] GameObject CutsceneVideoPlayer;
 
         #endregion
 
@@ -68,16 +74,15 @@ namespace Controllers
             }
         }
 
-        private IEnumerator LoadCutscene()
+        private IEnumerator LoadCutscene(Cutscene cutscene)
         {
-            LoadingScreenPanel.transform.Find("LoadingText").gameObject.SetActive(false);
-            LoadingScreenPanel.transform.Find("LoadingBar").gameObject.SetActive(false);
-            LoadingScreenPanel.SetActive(true);
+            menuController.menuPanels[2].transform.Find("LoadingText").gameObject.SetActive(false);
+            menuController.menuPanels[2].transform.Find("LoadingBar").gameObject.SetActive(false);
+            menuController.menuPanels[2].SetActive(true);
             transition.SetTrigger("Start");
-            yield return new WaitForSeconds(transitionTime);
+            yield return new WaitForSeconds(cutscene.transitionTime);
             Debug.Log("Cutscene Start");
-            NationSelection.SetActive(false);
-            CutscenePanel.SetActive(true);
+            //Enable the selected cutscene panel
             CutsceneVideoPlayer.SetActive(true);
             CutsceneVideoPlayer.GetComponent<UnityEngine.Video.VideoPlayer>().Play();
             cutsceneTransition.SetTrigger("Start");
@@ -85,6 +90,34 @@ namespace Controllers
             InvokeRepeating("checkScene", 0.1f, 0.1f);
         }
 
-        #endregion
+        private void checkScene(Cutscene cutscene)
+        {
+            long playerCurrentFrame = CutsceneVideoPlayer.GetComponent<UnityEngine.Video.VideoPlayer>().frame;
+            long playerFrameCount = Convert.ToInt64(CutsceneVideoPlayer.GetComponent<UnityEngine.Video.VideoPlayer>().frameCount) - 1;
+            if (playerCurrentFrame < playerFrameCount && isCompleted == false)
+            {
+                Debug.Log("Frame " + playerCurrentFrame + "/" + playerFrameCount);
+            }
+            else
+            {
+
+                Debug.Log("Cutscene Completed");
+
+                if (isCompleted)
+                {
+                    //disable the active cutscene panel here
+                    CutsceneVideoPlayer.SetActive(false);
+                    menuController.menuPanels[1].SetActive(true);
+                    transition.SetTrigger("End");
+                    Invoke("destroyLoadingScreen", cutscene.transitionTime);
+                    isCompleted = false;
+
+                }
+
+
+            }
+
+            #endregion
+        }
     }
 }

@@ -46,9 +46,17 @@ namespace Controllers
         private GameObject CutsceneVideoPlayer;
         private bool paused;
 
-        [Header("System")]
+        //Misc
         [SerializeField] private List<Scene> scenes = new List<Scene>();
+
+        //Public
+        [Header("System")]
         public List<GameObject> menuPanels = new List<GameObject>();
+        //Menu Panel = 0
+        //Game Panel = 1
+        //Loading Screen Panel = 2
+
+        //Maybe do a seperate cutscene panel here? idfk
 
         #endregion
 
