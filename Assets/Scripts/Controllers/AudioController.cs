@@ -31,6 +31,7 @@ namespace Controllers
         #region Variables
         [SerializeField] private Sound[] sounds;
         public AudioMixer mixer;
+        private float muteLastVol = 1;
         #endregion
 
         #region Core Functions
@@ -54,7 +55,7 @@ namespace Controllers
             Sound s = Array.Find(sounds, sound => sound.name == name);
             if (s == null)
             {
-                Debug.LogWarning("Sound: " + name + " does not exist");
+                Debug.LogWarning($"Sound: {name} does not exist");
                 return;
             }
             s.source.Play();
@@ -65,7 +66,7 @@ namespace Controllers
             Sound s = Array.Find(sounds, sound => sound.name == name);
             if (s == null)
             {
-                Debug.LogWarning("Sound: " + name + " does not exist");
+                Debug.LogWarning($"Sound: {name} does not exist");
                 return;
             }
             s.source.Stop();
@@ -73,9 +74,8 @@ namespace Controllers
 
         private void AudioPlayer(Sound musicClip)
         {
-            //If restarting, stop audio here
             Play(musicClip.name);
-            Debug.Log("Now Playing: " + musicClip.name);
+            Debug.Log($"Now Playing: {musicClip.name}");
         }
 
         public void SetLevel(eAudioType audioType, float sliderValue)
@@ -91,11 +91,33 @@ namespace Controllers
             }
         }
 
+        public float GetMSTVolume()
+        {
+            float value;
+            bool result = mixer.GetFloat("MST", out value);
+            if (result) return value;
+            else return 0f;
+        }
+
         public void Mute(bool mute)
         {
-            //Make the 0 into the previous value, perhaps player prefs?
-            if (mute) mixer.SetFloat("MST", -80);
-            else mixer.SetFloat("MST", 0);
+            if (mute)
+            {
+                muteLastVol = GetMSTVolume();
+                mixer.SetFloat("MST", -80);
+            }
+            else
+            {
+                if (muteLastVol > 0)
+                {
+                    mixer.SetFloat("MST", 0);
+                }
+                else
+                {
+                    mixer.SetFloat("MST", muteLastVol);
+                    muteLastVol = 1;
+                }
+            }
         }
         #endregion
 

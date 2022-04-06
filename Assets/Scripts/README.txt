@@ -1,5 +1,4 @@
 Note to self:
-Fix errors
 Implement commented out code
 Add Saving & Loading
 Test in unity
@@ -38,3 +37,8 @@ Other - Misc section, anything that does not fit the above belong in this catego
 	DontDestroy - Attach to an object and its children into multiple scenes
 
 	UIHelper - N/A
+
+
+
+Potential Issues:
+	Restarting the the game or a scene may cause audio to not reset correctly

@@ -105,7 +105,7 @@ namespace Controllers
 
                 if (isCompleted)
                 {
-                    //disable the active cutscene panel here
+                    //disable the selected cutscene panel here
                     CutsceneVideoPlayer.SetActive(false);
                     menuController.menuPanels[1].SetActive(true);
                     transition.SetTrigger("End");
